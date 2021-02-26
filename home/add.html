@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>用户添加</title>
+		<meta name="renderer" content="webkit">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+		<link rel="stylesheet" href="../css/layui.css" media="all">
+		<script src="../js/jquery-3.5.0.min.js" type="text/javascript" charset="utf-8"></script>
+	</head>
+	<body>
+		<div class="layui-card">
+			<div class="layui-card-header"></div>
+			<div class="layui-card-body">
+				<form class="layui-form" action="">
+					<div class="layui-form-item">
+						<label class="layui-form-label">姓名</label>
+						<div class="layui-input-block">
+							<input type="text" name="UserName" lay-verify="UserName" autocomplete="off" class="layui-input" placeholder="姓名">
+						</div>
+					</div>
+					<div class="layui-form-item">
+						<label class="layui-form-label">联系方式</label>
+						<div class="layui-input-block">
+							<input type="tel" name="phone" lay-verify="required|phone" autocomplete="off" class="layui-input" placeholder="请输入手机号">
+						</div>
+					</div>
+					<div class="layui-form-item">
+						<label class="layui-form-label">设置密码</label>
+						<div class="layui-input-inline">
+							<input type="text" name="password" lay-verify="pass" placeholder="请输入密码" autocomplete="off" class="layui-input">
+						</div>
+						<div class="layui-form-mid layui-word-aux">请填写6到12位密码</div>
+					</div>
+					<div class="layui-form-item">
+						<div class="layui-input-block">
+							<button type="submit" id="withExport" class="layui-btn" lay-submit="submit" lay-filter="demo2">保存</button>
+						</div>
+					</div>
+				</form>
+			</div>
+		</div>
+		<script src="../layui.js" charset="utf-8"></script>
+		<script src="../lay/modules/table.js" type="text/javascript" charset="utf-8"></script>
+		<script src="../js/wyq.js" type="text/javascript" charset="utf-8"></script>
+		<!-- 注意：如果你直接复制所有代码到本地，上述js路径需要改成你本地的 -->
+		<script type="text/javascript">
+			layui.use(['form', 'layedit', 'laydate'], function() {
+				var form = layui.form,
+					layer = layui.layer,
+					layedit = layui.layedit,
+					laydate = layui.laydate;
+			
+				//日期
+				laydate.render({
+					elem: '#date'
+				});
+				laydate.render({
+					elem: '#date1'
+				});
+			
+				//创建一个编辑器
+				var editIndex = layedit.build('LAY_demo_editor');
+			
+				//自定义验证规则
+				form.verify({
+					UserName: function(value) {
+						if (value.length < 1) {
+							return '姓名不能为空';
+						}
+					},
+					phone: function(value) {
+						
+						if (value.length != 11) {
+							return '请输入正确的手机号';
+						}
+					},
+					pass: [
+						/^[\S]{6,12}$/, '密码必须6到12位，且不能出现空格'
+					],
+					content: function(value) {
+						layedit.sync(editIndex);
+					}
+				});
+				//监听指定开关
+				form.on('switch(switchTest)', function(data) {
+					layer.msg('开关checked：' + (this.checked ? 'true' : 'false'), {
+						offset: '6px'
+					});
+					layer.tips('温馨提示：请注意开关状态的文字可以随意定义，而不仅仅是ON|OFF', data.othis)
+				});
+			
+				//监听提交
+				form.on('submit(demo2)', function(data) {
+					let dataArr = data.field
+					console.log(dataArr)
+					wyq.ajax(function(dat,err){
+						if(dat.Rows.ds[0].Status == '000000'){
+							layer.msg(dat.Rows.ds[0].Msg)
+							setTimeout(function(){
+								var index = parent.layer.getFrameIndex(window.name);
+								parent.location.reload();
+								parent.layer.close(index);
+							},500)
+							return false;
+						}
+						layer.msg(dat.Rows.ds[0].Msg)
+					},"AddUser","post",{
+						ids:'types,userName,PassWord,qiyeTitle,qiyeName,qiyePhone,qiyeAddress',
+						types:wyq.data.get("Uid",0),
+						userName:dataArr.UserName,
+						PassWord:dataArr.password,
+						qiyeTitle:dataArr.title,
+						qiyeName:dataArr.name,
+						qiyePhone:dataArr.phone,
+						qiyeAddress:dataArr.desc,
+					},{});
+					return false;
+				});
+			
+				//表单取值
+				layui.$('#LAY-component-form-getval').on('click', function() {
+					var data = form.val('example');
+					alert(JSON.stringify(data));
+				});
+			
+			});
+			
+			
+		</script>
+	</body>
+</html>

@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>证书管理</title>
+		<link rel="stylesheet" type="text/css" href="../css/layui.css" />
+		<link rel="stylesheet" href="../css/new_file.css">
+	</head>
+	<body>
+		<div class="layui-card-body">
+			<div class="layui-card">
+				<div class="layui-card-header">证书管理</div>
+				<div class="layui-card-body">
+					<table class="layui-hide" id="test" lay-filter="test"></table>
+					<!-- 表头工具 -->
+					<script type="text/html" id="default">
+						<div class="layui-inline" lay-event="add">
+							<i class="layui-icon layui-icon-add-1"></i>
+						</div>
+						<div class="layui-inline" lay-event="update">
+							 <i class="layui-icon">&#xe642;</i>
+						</div>
+						<div class="layui-inline" lay-event="delete">
+							 <i class="layui-icon">&#xe640;</i>
+						</div>
+						<div class="layui-inline" lay-event="sx">
+							 <i class="layui-icon">&#xe666;</i>
+						</div>
+					</script>
+					<!-- 侧边栏工具 -->
+					<script type="text/html" id="barDemo">
+						<a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+					</script>
+				</div>
+			</div>
+		</div>
+		<script src="../layui.js"></script>
+		<script src="../js/jquery-3.5.0.min.js" type="text/javascript" charset="utf-8"></script>
+		<script src="../js/vue.min.js" type="text/javascript" charset="utf-8"></script>
+		<script src="../js/wyq.js" type="text/javascript" charset="utf-8"></script>
+		<script>
+			var opt = {
+				elem: '#test',
+				method: 'POST',
+				url: 'http://dianda.guoguoliao.com/Server/api.aspx?Cmd=getzsn',
+				request: {
+					pageName: 'page',
+					limitName: 'top' //每页数据量的参数名，默认：limit
+				},
+				where: {
+					ids: "zid,page,top",
+					top: $(".layui-laypage-limits").find("option:selected").val(),
+					page: $(".layui-laypage-skip").find("input").val(),
+					zid:wyq.data.get("lqId",0)
+				},
+				parseData: function(res) { //res 即为原始返回的数据
+					console.log(res)
+					return {
+						"code": 0,
+						"msg": "",
+						"count": res.Rows.ds[0].Cont,
+						"data": res.Rows.ds1
+					};
+				},
+				defaultToolbar: ['filter', 'exports', 'print', { //自定义头部工具栏右侧图标。如无需自定义，去除该参数即可
+					title: '提示',
+					layEvent: 'LAYTABLE_TIPS',
+					icon: 'layui-icon-tips'
+				}],
+				title: '证书数据表',
+				cols: [
+					[{
+						type: 'checkbox',
+						fixed: 'left'
+					}, {
+						field: 'id',
+						title: '证书id',
+						width: 200,
+					} , {
+						field: 'bianhao',
+						title: '证书编号',
+						width: 200,
+					} ,{
+						field: 'UserName',
+						title: '领取人',
+						width: 130,
+					}, {
+						field: 'qiyePhone',
+						title: '联系方式',
+						width: 180,
+					},  {
+						field: 'Time',
+						title: '领取时间',
+						width: 200,
+					}, {
+						fixed: 'right',
+						title: '操作',
+						toolbar: '#barDemo',
+					}]
+				],
+				page: true
+			};
+			var table, tableIns;
+			layui.use('table', function() {
+				table = layui.table;
+				tableIns = table.render(opt);
+				$('#btn').on('click', function() {
+					opt.where = {
+						ids: "zid,page,top",
+						top: $(".layui-laypage-limits").find("option:selected").val(),
+						page: $(".layui-laypage-skip").find("input").val(),
+						zid:wyq.data.get("lqId",0),
+					};
+					table.render(opt);
+					return false;
+				});
+
+				//监听行工具事件
+				table.on('tool(test)', function(obj) {
+					var data = obj.data;
+					console.log(data)
+					if (obj.event === 'del') {
+						
+						layer.confirm('真的删除行么', function(index) {
+							wyq.ajax(function(ret, err, dat) {
+								console.log(ret)
+								layer.msg(ret.Rows.ds[0].Msg)
+								setTimeout(function(){
+									location.reload();
+								},500)
+							}, "updaUs", "post", {
+								ids: 'id',
+								id: data.id,
+							});
+							
+						});
+					} 
+				});
+			});
+			
+		</script>
+	</body>
+</html>

@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>课程分类</title>
+		<link rel="stylesheet" type="text/css" href="../css/layui.css" />
+		<link rel="stylesheet" href="../css/new_file.css">
+
+	</head>
+	<body>
+		<div class="layui-fluid" id="app">
+			<div class="layui-row">
+				<div class="layui-col-md12">
+					<div class="layui-card-body">
+						<div class="layui-card-body">
+							<div class="layui-card">
+								<div class="layui-card-header">搜索</div>
+								<div class="layui-card-body" style="display: flex;">
+									<input type="text" id='soBtn' placeholder="搜索标题" autocomplete="off" class="layui-input layui-input-search">
+								</div>
+								<div class="layui-card-body" style="display: flex;">
+									<form class="layui-form">
+										<div class="layui-input-inline">
+											<select name="modules" lay-verify="required" lay-search="">
+												<option value="">--请选择栏目--</option>
+												<template v-for="item in dataList">
+													<option :value="item.id">{{item.Name}}</option>
+												</template>
+											</select>
+										</div>
+										<button type="button" id="btn" style="margin-left: 10px;" class="layui-btn layui-btn-normal" data-type="reload">搜索</button>
+									</form>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="layui-fluid" style="margin-top: -20px;">
+			<div class="layui-row">
+				<div class="layui-col-md12">
+					<div class="layui-card-body">
+						<div class="layui-card">
+							<div class="layui-card-header">课程视频表</div>
+							<div class="layui-card-body">
+								<table class="layui-hide" id="test" lay-filter="test"></table>
+								<!-- 表头工具 -->
+								<script type="text/html" id="default">
+									<div class="layui-inline" lay-event="add">
+										<i class="layui-icon layui-icon-add-1"></i>
+									</div>
+									<div class="layui-inline" lay-event="update">
+										 <i class="layui-icon">&#xe642;</i>
+									</div>
+									<div class="layui-inline" lay-event="delete">
+										 <i class="layui-icon">&#xe640;</i>
+									</div>
+									<div class="layui-inline" lay-event="sx">
+										 <i class="layui-icon">&#xe666;</i>
+									</div>
+								</script>
+								<!-- 侧边栏工具 -->
+								<script type="text/html" id="barDemo">
+									<a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="detail">编辑</a>
+								  <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+								</script>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+		</div>
+		<script src="../js/jquery-3.5.0.min.js" type="text/javascript" charset="utf-8"></script>
+		<script src="../js/vue.min.js" type="text/javascript" charset="utf-8"></script>
+		<script src="../layui.js"></script>
+		<script src="../js/wyq.js" type="text/javascript" charset="utf-8"></script>
+		<script src="../js/modules/table.js" type="text/javascript" charset="utf-8"></script>
+		<script>
+			var app = new Vue({
+				el: '#app',
+				data: {
+					dataList: [],
+				},
+				mounted() {
+			
+				},
+				methods: {
+			
+				},
+			})
+			sx()
+			function sx(){
+				wyq.ajax(function(dat,err){
+					app.dataList=dat.Rows.ds1
+					setTimeout(function(){
+						
+					},500)
+				},"getFenllei","post",{
+					ids:'uid',
+					uid:wyq.data.get("Uid",0),
+					
+				},{});
+				
+			};
+			
+			
+			var opt = {
+				elem: '#test',
+				method: 'POST',
+				url: 'http://dianda.guoguoliao.com/Server/api.aspx?Cmd=getSp',
+				toolbar: '#default',
+				request: {
+					pageName: 'page' //页码的参数名称，默认：page
+						,
+					limitName: 'top' //每页数据量的参数名，默认：limit
+				},
+				parseData: function(res) { //res 即为原始返回的数据
+					return {
+						"code": 0,
+						"msg": "",
+						"count": res.Rows.ds[0].Cont,
+						"data": res.Rows.ds1
+					};
+				},
+				where: {
+					ids: "page,top,uid,title,tid",
+					uid: wyq.data.get("Uid", 0),
+					top: $(".layui-laypage-limits").find("option:selected").val(),
+					page: $(".layui-laypage-skip").find("input").val(),
+					title: $('#soBtn').val(),
+					tid:$("select")[0].value
+				},
+
+				defaultToolbar: ['filter', 'exports', 'print', { //自定义头部工具栏右侧图标。如无需自定义，去除该参数即可
+					title: '提示',
+					layEvent: 'LAYTABLE_TIPS',
+					icon: 'layui-icon-tips'
+				}],
+				title: '用户数据表',
+				cols: [
+					[{
+						type: 'checkbox',
+						fixed: 'left'
+					}, {
+						field: 'id',
+						title: 'ID',
+						width: 105,
+					}, {
+						field: 'Name',
+						title: '类目',
+						width: 150,
+					}, {
+						field: 'Title',
+						title: '标题',
+						width: 155,
+					}, {
+						field: 'miaoshu',
+						title: '描述',
+						width: 180,
+					}, {
+						field: 'sp_url',
+						title: '视频链接',
+						width: 300,
+					}, {
+						fixed: 'right',
+						title: '操作',
+						toolbar: '#barDemo',
+						width: 180
+					}],
+				],
+				page: true //是否显示分页
+			};
+			var table, tableIns;
+			layui.use('table', function() {
+				table = layui.table;
+				tableIns = table.render(opt);
+				$('#btn').on('click', function() {
+					opt.where = {
+						ids: "page,top,uid,title,tid",
+						uid: wyq.data.get("Uid", 0),
+						top: $(".layui-laypage-limits").find("option:selected").val(),
+						page: $(".layui-laypage-skip").find("input").val(),
+						title: $('#soBtn').val(),
+						tid:$("select")[0].value
+					};
+					table.render(opt);
+					return false;
+				});
+				//头工具栏事件
+				table.on('toolbar(test)', function(obj) {
+					var checkStatus = table.checkStatus(obj.config.id),
+						data = checkStatus.data; //获取选中的数据
+					switch (obj.event) {
+						case 'add':
+							wyq.data.set("spId", 0)
+							layer.open({
+								title: ['编辑', 'font-size:18px;'],
+								type: 2,
+								area: [wyq.data.width(), wyq.data.height()],
+								content: 'Addcurriculum.html'
+							});
+							break;
+						case 'update':
+							if (data.length === 0) {
+								layer.msg('请选择一行');
+							} else if (data.length > 1) {
+								layer.msg('只能同时编辑一个');
+							} else {
+								wyq.data.set("spId", checkStatus.data[0].id)
+								layer.open({
+									title: ['编辑', 'font-size:18px;'],
+									type: 2,
+									area: [wyq.data.width(), wyq.data.height()],
+
+									content: 'Addcurriculum.html'
+								});
+							}
+							break;
+						case 'delete':
+							if (data.length === 0) {
+								layer.msg('请选择一行');
+							} else {
+								var len = data.length;
+								var dataArr = [];
+								for (var i = 0; i < len; i++) {
+									dataArr.push(data[i].id)
+								}
+								var arr = dataArr.toString();
+								layer.confirm('真的删除行么', function(index) {
+									wyq.ajax(function(ret, err, dat) {
+										location.reload();
+									}, "Delkec", "post", {
+										ids: 'id',
+										id: arr,
+									});
+								});
+							}
+							break;
+							case 'sx':
+								location.reload();
+								break;
+					};
+				});
+
+				//监听行工具事件
+				table.on('tool(test)', function(obj) {
+					var data = obj.data;
+					if (obj.event === 'detail') {
+						wyq.data.set("spId", data.id)
+						layer.open({
+							title: ['编辑', 'font-size:18px;'],
+							type: 2,
+							area: [wyq.data.width(), wyq.data.height()],
+
+							content: 'Addcurriculum.html'
+						});
+					} else if (obj.event === 'del') {
+						layer.confirm('真的删除行么', function(index) {
+							wyq.ajax(function(ret, err, dat) {
+								location.reload();
+							}, "Delkec", "post", {
+								ids: 'id',
+								id: data.id,
+							});
+						});
+					} else if (obj.event === 'edit') {
+						layer.prompt({
+							formType: 2,
+							value: data.email
+						}, function(value, index) {
+							obj.update({
+								email: value
+							});
+							layer.close(index);
+						});
+					}
+				});
+			});
+		</script>
+	</body>
+</html>

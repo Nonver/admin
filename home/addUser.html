@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>用户添加</title>
+		<meta name="renderer" content="webkit">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+		<link rel="stylesheet" href="../css/layui.css" media="all">
+		<script src="../js/jquery-3.5.0.min.js" type="text/javascript" charset="utf-8"></script>
+	</head>
+	<body>
+		<div class="layui-card">
+			<div class="layui-card-header"></div>
+			<div class="layui-card-body">
+				<form class="layui-form" action="">
+					<div class="layui-form-item">
+						<label class="layui-form-label">用户名</label>
+						<div class="layui-input-block">
+							<input type="text" name="UserName" lay-verify="Name" autocomplete="off" class="layui-input" placeholder="用户名">
+						</div>
+					</div>
+					<div class="layui-form-item">
+						<label class="layui-form-label">手机号</label>
+						<div class="layui-input-block">
+							<input type="tel" name="phone" lay-verify="Phone" autocomplete="off" class="layui-input" placeholder="联系方式">
+						</div>
+					</div>
+					<div class="layui-form-item">
+						<label class="layui-form-label">企业名称</label>
+						<div class="layui-input-block">
+							<input type="text" name="title" lay-verify="title" autocomplete="off" placeholder="请输入企业名称" class="layui-input">
+						</div>
+					</div>
+					<div class="layui-form-item">
+						<label class="layui-form-label">设置密码</label>
+						<div class="layui-input-inline">
+							<input type="password" name="password" lay-verify="pass" placeholder="请输入密码" autocomplete="off" class="layui-input">
+						</div>
+						<div class="layui-form-mid layui-word-aux">请填写6到12位密码</div>
+					</div>
+					<div class="layui-form-item">
+						<label class="layui-form-label">企业地址</label>
+						<div class="layui-input-block">
+							<textarea name="desc" placeholder="请输入公司地址" class="layui-textarea"></textarea>
+						</div>
+					</div>
+
+					<div class="layui-form-item">
+						<div class="layui-input-block">
+							<button type="submit" id="withExport" class="layui-btn" lay-submit="submit" lay-filter="demo2">保存</button>
+						</div>
+					</div>
+				</form>
+			</div>
+		</div>
+
+		<script src="../layui.js" charset="utf-8"></script>
+		<script src="../lay/modules/table.js" type="text/javascript" charset="utf-8"></script>
+		<script src="../js/wyq.js" type="text/javascript" charset="utf-8"></script>
+		<!-- 注意：如果你直接复制所有代码到本地，上述js路径需要改成你本地的 -->
+		<script type="text/javascript">
+			layui.use(['form', 'layedit', 'laydate'], function() {
+				var form = layui.form,
+					layer = layui.layer,
+					layedit = layui.layedit,
+					laydate = layui.laydate;
+
+				//日期
+				laydate.render({
+					elem: '#date'
+				});
+				laydate.render({
+					elem: '#date1'
+				});
+
+				//创建一个编辑器
+				var editIndex = layedit.build('LAY_demo_editor');
+
+				//自定义验证规则
+				form.verify({
+
+					Name: function(value) {
+						if (value.length < 1) {
+							return '姓名不能为空';
+						}
+					},
+
+					title: function(value) {
+						if (value.length < 2) {
+							return '请输入正确的企业名称';
+						}
+					},
+					pass: [
+						/^[\S]{6,12}$/, '密码必须6到12位，且不能出现空格'
+					],
+					content: function(value) {
+						layedit.sync(editIndex);
+					}
+				});
+				form.on('submit(demo2)', function(data) {
+					let dataArr = data.field
+					var phoneReg = /^(?:(?:\+|00)86)?1\d{10}$/;
+					if (!phoneReg.test(dataArr.phone)) {
+						layer.msg('请输入正确的手机号', {
+							icon: 5
+						});
+					} else {
+						wyq.ajax(function(dat, err) {
+							layer.msg(dat.Rows.ds[0].Msg)
+							setTimeout(function() {
+								if (dat.Rows.ds[0].Msg == '新增成功') {
+									var index = parent.layer.getFrameIndex(window.name);
+									parent.location.reload();
+									parent.layer.close(index);
+								}
+							}, 1000)
+						}, "AddUser", "post", {
+							ids: 'types,userName,PassWord,qiyeTitle,qiyePhone,qiyeAddress',
+							types: 1,
+							userName: dataArr.UserName,
+							PassWord: dataArr.password,
+							qiyeTitle: dataArr.title,
+							qiyePhone: dataArr.phone,
+							qiyeAddress: dataArr.desc,
+						}, {});
+					}
+					// let dataArr = data.field
+
+					return false;
+				});
+
+				//表单取值
+				layui.$('#LAY-component-form-getval').on('click', function() {
+					var data = form.val('example');
+					alert(JSON.stringify(data));
+				});
+
+			});
+		</script>
+	</body>
+</html>

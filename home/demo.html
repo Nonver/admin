@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>商户用户</title>
+		<link rel="stylesheet" type="text/css" href="../css/layui.css" />
+		<link rel="stylesheet" href="../css/new_file.css">
+		<script src="../js/jquery-3.5.0.min.js" type="text/javascript" charset="utf-8"></script>
+	</head>
+	<body>
+		<div class="layui-fluid">
+			<div class="layui-row">
+				<div class="layui-col-md6">
+					<div class="layui-card-body">
+						<div class="layui-card">
+							<div class="layui-card-header">搜索</div>
+							<div class="layui-card-body" style="display: flex;">
+								<input type="text" id='soBtn' placeholder="请输入联系方式..." autocomplete="off" class="layui-input layui-input-search">
+								<button type="button" id="btn" style="margin-left: 10px;" class="layui-btn layui-btn-normal" data-type="reload">搜索</button>
+							</div><br>
+						</div>
+					</div>
+				</div>
+				<div class="layui-col-md6">
+					<div class="layui-card-body">
+						<div class="layui-card">
+							<div class="layui-card-header">添加</div>
+							<div class="layui-card-body" style="display: flex;">
+								<div class="site-demo-button" id="layerDemo" style="margin-bottom: 0;margin-right: 10px;">
+									<button data-method="offset" data-type="auto" class="layui-btn layui-btn-normal">用户添加</button>
+								</div>
+							</div><br>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="layui-card-body">
+			<div class="layui-card">
+				<div class="layui-card-header">商户数据表</div>
+				<div class="layui-card-body">
+					<table class="layui-hide" id="test" lay-filter="test" lay-data="{id: 'idTest'}"></table>
+					<!-- 表头工具 -->
+					<script type="text/html" id="default">
+						<div class="layui-inline" lay-event="add">
+							<i class="layui-icon layui-icon-add-1"></i>
+						</div>
+						<div class="layui-inline" lay-event="update">
+							 <i class="layui-icon">&#xe642;</i>
+						</div>
+						<div class="layui-inline" lay-event="delete">
+							 <i class="layui-icon">&#xe640;</i>
+						</div>
+						<div class="layui-inline" lay-event="sx">
+							 <i class="layui-icon">&#xe666;</i>
+						</div>
+					</script>
+					<!-- 侧边栏工具 -->
+					<script type="text/html" id="barDemo">
+						<a class="layui-btn layui-btn-xs" lay-event="bj">密码重置</a>
+						<a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+					</script>
+				</div>
+			</div>
+		</div>
+		<script src="../layui.js"></script>
+		<script src="../js/wyq.js" type="text/javascript" charset="utf-8"></script>
+		<script src="../lay/modules/table.js" type="text/javascript" charset="utf-8"></script>
+		<script>
+			layui.use('layer', function() { //独立版的layer无需执行这一句
+				var $ = layui.jquery,
+					layer = layui.layer; //独立版的layer无需执行这一句
+				//触发事件
+				var active = {
+					offset: function(othis) {
+						var type = othis.data('type'),
+							text = othis.text();
+						layer.open({
+							title: ['用户添加', 'font-size:18px;'],
+							type: 2,
+							area: [wyq.data.width(), wyq.data.height()],
+							content: 'add.html'
+						});
+					}
+				};
+				$('#layerDemo .layui-btn').on('click', function() {
+					var othis = $(this),
+						method = othis.data('method');
+					active[method] ? active[method].call(this, othis) : '';
+				});
+			});
+			var opt = {
+				elem: '#test',
+				method: 'POST',
+				url: 'http://dianda.guoguoliao.com/Server/api.aspx?Cmd=GetUser',
+				toolbar: '#default',
+				request: {
+					pageName: 'page',
+					limitName: 'top'
+				},
+				parseData: function(res) { //res 即为原始返回的数据
+					console.log(res)
+					return {
+						"code": 0,
+						"msg": "",
+						"count": res.Rows.ds[0].Cont,
+						"data": res.Rows.ds1
+					};
+				},
+				where: {
+					ids: "page,top,phone,id",
+					id: wyq.data.get("Uid", "0"),
+					phone: $('#soBtn')[0].value,
+					top: $(".layui-laypage-limits").find("option:selected").val(),
+					page: $(".layui-laypage-skip").find("input").val()
+				},
+
+				title: '用户数据表',
+				cols: [
+					[{
+						type: 'checkbox',
+						fixed: 'left'
+					}, {
+						field: 'id',
+						title: 'ID',
+						width: 80,
+						fixed: 'left',
+						unresize: true,
+					}, {
+						field: 'UserName',
+						title: '用户名',
+						width: 120,
+					}, {
+						field: 'PassWord',
+						title: '密码',
+						width: 180
+					}, {
+						field: 'qiyePhone',
+						title: '联系电话',
+						width: 150,
+					}, {
+						field: 'Status',
+						title: '状态',
+						width: 100,
+						templet: function(res) {
+							if (res.Status == 1) {
+								return '正常'
+							}
+							return '注销'
+						}
+					}, {
+						field: 'Time',
+						title: '加入时间',
+						width: 120
+					}, {
+						fixed: 'right',
+						title: '操作',
+						toolbar: '#barDemo',
+					}]
+				],
+				page: true //是否显示分页
+			};
+
+			var table, tableIns;
+			layui.use('table', function() {
+				table = layui.table;
+				tableIns = table.render(opt);
+				$('#btn').on('click', function() {
+					opt.where = {
+						ids: "page,top,phone,id",
+						id: wyq.data.get("Uid", "0"),
+						phone: $('#soBtn')[0].value,
+						top: $(".layui-laypage-limits").find("option:selected").val(),
+						page: $(".layui-laypage-skip").find("input").val()
+					};
+					table.render(opt);
+					return false;
+				});
+				//头工具栏事件
+				table.on('toolbar(test)', function(obj) {
+					var checkStatus = table.checkStatus(obj.config.id),
+						data = checkStatus.data; //获取选中的数据
+					switch (obj.event) {
+						case 'add':
+							layer.open({
+								title: ['添加用户', 'font-size:18px;'],
+								type: 2,
+								area: [wyq.data.width(), wyq.data.height()],
+								content: 'add.html'
+							});
+							break;
+						case 'update':
+							if (data.length === 0) {
+								layer.msg('请选择一行');
+							} else if (data.length > 1) {
+								layer.msg('只能同时编辑一个');
+							} else {
+								localStorage.objId = checkStatus.data[0].id;
+								layer.open({
+									title: ['用户修改', 'font-size:18px;'],
+									type: 2,
+									area: [wyq.data.width(), wyq.data.height()],
+									content: 'edit.html'
+								});
+
+							}
+							break;
+						case 'delete':
+							if (data.length === 0) {
+								layer.msg('请选择一行');
+							} else {
+								var len = data.length;
+								var dataArr = [];
+								for (var i = 0; i < len; i++) {
+									dataArr.push(data[i].id)
+								}
+								var arr = dataArr.toString();
+								layer.confirm('真的删除行么', function(index) {
+									wyq.ajax(function(ret, err, dat) {
+										layer.msg(ret.Rows.ds[0].Msg)
+										location.reload();
+									}, "delUser", "post", {
+										ids: 'id',
+										id: arr,
+									});
+								});
+							}
+							break;
+						case 'sx':
+							location.reload();
+							break;		
+					};
+				});
+
+				//监听行工具事件
+				table.on('tool(test)', function(obj) {
+					var data = obj.data;
+					//console.log(obj)
+					if (obj.event === 'del') {
+						layer.confirm('真的删除行么', function(index) {
+							wyq.ajax(function(ret, err, dat) {
+								location.reload();
+							}, "delUser", "post", {
+								ids: 'id',
+								id: data.id,
+							});
+						});
+					} else if (obj.event === 'edit') {
+						localStorage.objId = obj.data.id;
+						layer.open({
+							title: ['用户修改', 'font-size:18px;'],
+							type: 2,
+							area: [wyq.data.width(), wyq.data.height()],
+							content: 'edit.html'
+						});
+					} else if (obj.event === 'bj') {
+						localStorage.objId = obj.data.id;
+
+						layer.confirm('是否重置密码？', function(index) {
+							wyq.ajax(function(ret, err, dat) {
+								layer.msg(ret.Rows.ds[0].Msg)
+								setTimeout(function() {
+									location.reload();
+								}, 500)
+							}, "upwass", "post", {
+								ids: 'id',
+								id: obj.data.id,
+							});
+
+						});
+
+					}
+				});
+			});
+
+			var active = {
+				auot: function(othis) {
+					var type = othis.data('type'),
+						text = othis.text();
+					console.log(othis)
+					layer.open({
+						type: 1,
+						offset: type //具体配置参考：http://www.layui.com/doc/modules/layer.html#offset
+							,
+						id: 'layerDemo' + type //防止重复弹出
+							,
+						content: '<div style="padding: 20px 100px;">' + text + '</div>',
+						btn: '关闭全部',
+						btnAlign: 'c' //按钮居中
+							,
+						shade: 0 //不显示遮罩
+							,
+						yes: function() {
+							layer.closeAll();
+						}
+					});
+				}
+			};
+		</script>
+
+	</body>
+</html>

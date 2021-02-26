@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>编辑</title>
+		<meta name="renderer" content="webkit">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+		<link rel="stylesheet" href="../css/layui.css" media="all">
+		<script src="../js/jquery-3.5.0.min.js" type="text/javascript" charset="utf-8"></script>
+	</head>
+	<body>
+		<div id="app">
+			<div class="layui-card">
+				<div class="layui-card-header"></div>
+				<div class="layui-card-body">
+					<form class="layui-form" action="">
+						<div class="layui-form-item">
+							<label class="layui-form-label">栏目分类</label>
+							<div class="layui-input-block">
+								<input v-model="Name" id="Userke" type="text" name="username" lay-verify="required" lay-reqtext="请输入栏目分类"
+								 autocomplete="off" class="layui-input">
+							</div>
+						</div>
+						<div class="layui-form-item" v-if="ism==1">
+							<label class="layui-form-label">课程金额</label>
+							<div class="layui-input-block">
+								<input v-model="jine" id="jine" @mouseleave="leave" type="number" name="username" lay-verify="required" autocomplete="off" class="layui-input" placeholder="默认免费设置为0">
+								<span v-if="jine<=0" style="color: red;font-size: 10px;">*默认免费设置为0</span>
+							</div>
+						</div>
+						<div class="layui-form-item">
+							<div class="layui-input-block">
+								<button type="submit" class="layui-btn" lay-submit="" lay-filter="demo1">提交</button>
+							</div>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+		<script src="../js/vue.min.js" type="text/javascript" charset="utf-8"></script>
+		<script src="../layui.js" charset="utf-8"></script>
+		<script src="../js/wyq.js" type="text/javascript" charset="utf-8"></script>
+		<!-- 注意：如果你直接复制所有代码到本地，上述js路径需要改成你本地的 -->
+		<script>
+			var app = new Vue({
+				el: '#app',
+				data: {
+					is: true,
+					Name: null,
+					jine: 0,
+					ism:wyq.data.get("set",0)
+				},
+				methods: {
+					leave: function() {
+						var jine = $("#jine").val();
+						let lan = jine.toString().split()[0].substr(0, 1)
+						if (lan == 0) {
+							if (jine.toString().split()[0].substr(0, 2).length > 1) {
+								layer.msg('非法输入')
+								$("#jine").val('');
+								return
+							}
+						}
+						if(jine.toString().split(".")[1].length > 2){
+							layer.msg('非法输入')
+							$("#jine").val('');
+							return
+						}
+					}
+				},
+			})
+			sx();
+			function sx() {
+				wyq.ajax(function(ret, err, dat) {
+
+					console.log('disabled')
+					if (jine = ret.Rows.ds[0].Pid <= 0) {
+						$("#jine").attr("disabled", "disabled");
+						$("#jine").css({
+							"cursor": "no-drop"
+						});
+					}
+					app.Name = ret.Rows.ds[0].Name
+					app.jine = ret.Rows.ds[0].sf_jine
+				}, "getid", "post", {
+					ids: 'id',
+					id: localStorage.getItem("ListId")
+				});
+			};
+			layui.use(['form', 'layedit', 'laydate'], function() {
+				var form = layui.form,
+					layer = layui.layer,
+					layedit = layui.layedit,
+					laydate = layui.laydate;
+				//日期
+				laydate.render({
+					elem: '#date'
+				});
+				laydate.render({
+					elem: '#date1'
+				});
+
+				//创建一个编辑器
+				var editIndex = layedit.build('LAY_demo_editor');
+
+				//自定义验证规则
+				form.verify({
+					title: function(value) {
+						if (value.length < 5) {
+							return '标题至少得5个字符啊';
+						}
+					},
+					pass: [
+						/^[\S]{6,12}$/, '密码必须6到12位，且不能出现空格'
+					],
+					content: function(value) {
+						layedit.sync(editIndex);
+					}
+				});
+				//监听指定开关
+				form.on('switch(switchTest)', function(data) {
+					console.log(this.checked)
+					console.log(app._data.is)
+					app._data.is = this.checked
+				});
+				//监听提交
+				form.on('submit(demo1)', function(data) {
+					let jine = $("#jine").val()
+					if(jine==null||jine==undefined||jine==""){
+						jine=0
+					}
+					
+					let Sta = 0
+					if (jine == 0) {
+						Sta = 0
+					}else{
+						Sta = 1
+					}
+					wyq.ajax(function(ret, err, dat) {
+						if (ret.Rows.ds[0].Status == '000000') {
+							layer.msg(ret.Rows.ds[0].Msg)
+							setTimeout(function() {
+								window.parent.location.reload();
+							}, 1000)
+						} else {
+							layer.msg(ret.Rows.ds[0].Msg)
+						}
+					}, "upName", "post", {
+						ids: 'uid,name,jine,Status',
+						uid: localStorage.getItem("ListId"),
+						name: $("#Userke").val(),
+						jine: jine,
+						Status: Sta
+					});
+					return false;
+				});
+				//表单取值
+				layui.$('#LAY-component-form-getval').on('click', function() {
+					var data = form.val('example');
+					alert(JSON.stringify(data));
+				});
+			});
+		</script>
+
+	</body>
+</html>

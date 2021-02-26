@@ -1,0 +1,133 @@
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>layuiAdmin 控制台主页一</title>
+		<meta name="renderer" content="webkit">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+		<link rel="stylesheet" href="../css/layui.css" media="all">
+		<link rel="stylesheet" type="text/css" href="../css/new_file.css" />
+		<script src="../layui.js" type="text/javascript" charset="utf-8"></script>
+	</head>
+	<body layadmin-themealias="default">
+		<div class="layui-fluid" id="app">
+			<div class="layui-row">
+				<div class="layui-row layui-col-space15">
+					<!-- 商户信息 -->
+					<div class="layui-col-md12">
+						<div class="layui-card">
+							<div class="layui-card-header">平台商户</div>
+							<div class="layui-card-body">
+								<div class="layui-carousel layadmin-carousel layadmin-backlog" lay-anim="" lay-indicator="inside" lay-arrow="none"
+								 style="width: 100%; height: 280px;">
+									<div carousel-item="">
+										<ul class="layui-row layui-col-space10 layui-this">
+											<li class="layui-col-xs3">
+												<a lay-href="app/content/comment.html" class="layadmin-backlog-body">
+													<h3>全部用户</h3>
+													<p><cite id="name"></cite></p>
+												</a>
+											</li>
+											<li class="layui-col-xs3">
+												<a lay-href="template/goodslist.html" class="layadmin-backlog-body">
+													<h3>栏目分类</h3>
+													<p><cite id="kec"></cite></p>
+												</a>
+											</li>
+											<li class="layui-col-xs3">
+												<a lay-href="template/goodslist.html" class="layadmin-backlog-body">
+													<h3>题目总数</h3>
+													<p><cite id="keti">100</cite></p>
+												</a>
+											</li>
+											<li class="layui-col-xs3">
+												<a lay-href="template/goodslist.html" class="layadmin-backlog-body">
+													<h3>视频总数</h3>
+													<p><cite id="sp">100</cite></p>
+												</a>
+											</li>
+											<li class="layui-col-xs3">
+												<a lay-href="template/goodslist.html" class="layadmin-backlog-body">
+													<h3>证书总数</h3>
+													<p><cite id="zs">100</cite></p>
+												</a>
+											</li>
+											<li class="layui-col-xs3">
+												<a lay-href="template/goodslist.html" class="layadmin-backlog-body">
+													<h3>证书领取人数</h3>
+													<p><cite id="zslq">100</cite></p>
+												</a>
+											</li>
+											<li class="layui-col-xs3">
+												<a lay-href="template/goodslist.html" class="layadmin-backlog-body">
+													<h3>暂无</h3>
+													<p><cite id="zan">0</cite></p>
+												</a>
+											</li>
+										</ul>
+									</div>
+									<button class="layui-icon layui-carousel-arrow" lay-type="sub"></button><button class="layui-icon layui-carousel-arrow"
+									 lay-type="add"></button>
+								</div>
+							</div>
+						</div>
+					</div>
+					<!-- 系统版本 -->
+					<div class="layui-col-md12">
+						<div class="layui-card">
+							<div class="layui-card-header">版本信息</div>
+							<div class="layui-card-body layui-text">
+								<table class="layui-table">
+									<colgroup>
+										<col width="100">
+										<col>
+									</colgroup>
+									<tbody>
+										<tr>
+											<td>当前版本</td>
+											<td>
+												<script type="text/html" template="">
+													v{{ layui.admin.v }}
+						                      <a href="http://fly.layui.com/docs/3/" target="_blank" style="padding-left: 10px;">日志</a>
+						                    </script>
+												v1.4.0 std <a href="http://fly.layui.com/docs/3/" target="_blank" style="padding-left: 10px;">日志</a>
+												<a href="javascript:;" layadmin-event="update" style="padding-left: 5px;">检查更新</a>
+											</td>
+										</tr>
+										<tr>
+											<td>开发：</td>
+											<td>
+												宁波孩子王文化发展有限公司
+											</td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</body>
+	<script src="../js/jquery-3.5.0.min.js" type="text/javascript" charset="utf-8"></script>
+	<script src="../js/wyq.js" type="text/javascript" charset="utf-8"></script>
+	<script src="../js/vue.min.js" type="text/javascript" charset="utf-8"></script>
+	<script type="text/javascript">
+
+		sx();
+		function sx(){
+			wyq.ajax(function(ret,err,dat){
+			console.log(ret.Rows)
+			$("#name")[0].innerHTML = ret.Rows.ds[0].name
+			$("#kec")[0].innerHTML = ret.Rows.ds1[0].kec
+			$("#keti")[0].innerHTML = ret.Rows.ds2[0].kaoshi
+			$("#sp")[0].innerHTML = ret.Rows.ds3[0].sp
+			$("#zs")[0].innerHTML = ret.Rows.ds4[0].zs
+			$("#zslq")[0].innerHTML = ret.Rows.ds5[0].zslq
+			},"getind","post",{
+				ids:'uid',
+				uid:wyq.data.get("Uid",0)
+			})
+		}
+	</script>
+</html>

@@ -1,0 +1,72 @@
+<html class=" -webkit- js flexbox canvas canvastext webgl no-touch geolocation postmessage websqldatabase indexeddb hashchange history draganddrop websockets rgba hsla multiplebgs backgroundsize borderimage borderradius boxshadow textshadow opacity cssanimations csscolumns cssgradients cssreflections csstransforms csstransforms3d csstransitions fontface generatedcontent video audio localstorage sessionstorage webworkers no-applicationcache svg inlinesvg smil svgclippaths"
+ style="">
+	<head>
+		<meta charset="UTF-8">
+		<title>HTML5 Preview Panel</title>
+		
+		<style>.item {
+    float: left;
+    width: 50%;
+}
+#temp {
+    width: 100%;
+}</style>
+		<script src="../js/jquery-3.5.0.min.js"></script>
+	</head>
+	<body>
+		<div>
+			<div class="item">
+				<form action="" name="name_form" method="get">
+					<div>
+						<div>姓名</div>
+						<div>
+							<input type="text" id="your_name" placeholder="输入你的名字" value="张三">
+						</div>
+					</div>
+					<div>
+						<div>高中</div>
+						<div>
+							<input type="text" id="your_school" placeholder="输入你的学校名字" value="复旦附中">
+						</div>
+					</div>
+					<div>
+						<div>性别</div>
+						<div>
+							<input type="radio" name="your_sex" id="your_sex_male" value="男" checked="true">男
+							<input type="radio" name="your_sex" id="your_sex_female" value="女">女
+						</div>
+					</div>
+					<div>
+						<button type="button" onclick="javascript:gen_zkz_func();">生成准考证图片</button>
+					</div>
+				</form>
+			</div>
+			<div class="item">
+				<img id="base" style="display:none;" src="https://img-blog.csdnimg.cn/20190609145127559.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzQ0NDg1NTU5,size_16,color_FFFFFF,t_70" data-bd-imgshare-binded="1">
+				<canvas id="temp" style="display:none;"></canvas>
+			</div>
+		</div>
+		<script>
+			function drawCanvas(imgObj) {
+				var c = document.getElementById('temp');
+				c.width = 800;
+				c.height = 500;
+				var ctx = c.getContext("2d");
+				ctx.font = "bold 28px 'SimSun'";
+				ctx.fillStyle = "#000000";
+
+				ctx.drawImage(imgObj, 0, 0); // 背景图
+
+				ctx.fillText($('#your_name').val(), 410, 416); // 姓名
+				ctx.fillText($('input:radio[name=your_sex]:checked').val(), 640, 416); //性别
+				ctx.fillText($('#your_school').val(), 410, 485); //位置
+				$('#temp').show();
+			}
+
+			function gen_zkz_func() {
+				var img = document.getElementById("base");
+				drawCanvas(img);
+			}
+		</script>
+	</body>
+</html>
