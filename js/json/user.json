@@ -1,0 +1,171 @@
+{
+	"code": 0,
+	"msg": "",
+	"count": 1000,
+	"data": [{
+		"id": 10000,
+		"username": "user-0",
+		"item":"2020-01-01",
+		"city": "城市-0",
+		"sign": "宁波孩子王文化发展有限公司",
+		"experience": 255,
+		"logins": 24,
+		"wealth": 82,
+		"classify": "教育机构",
+		"score": 57
+	}, {
+		"id": 10001,
+		"username": "user-1",
+		"item":"2020-01-01",
+		"city": "城市-1",
+		"sign": "宁波孩子王文化发展有限公司",
+		"experience": 884,
+		"logins": 58,
+		"wealth": 6,
+		"classify": "教育机构",
+		"score": 27
+	}, {
+		"id": 10002,
+		"username": "user-2",
+		"item":"2020-01-01",
+		"city": "城市-2",
+		"sign": "宁波孩子王文化发展有限公司",
+		"experience": 650,
+		"logins": 77,
+		"wealth": 1,
+		"classify": "教育机构",
+		"score": 31
+	}, {
+		"id": 10003,
+		"username": "user-3",
+		"item":"2020-01-01",
+		"city": "城市-3",
+		"sign": "宁波孩子王文化发展有限公司",
+		"experience": 362,
+		"logins": 157,
+		"wealth": 22,
+		"classify": "教育机构",
+		"score": 68
+	}, {
+		"id": 10004,
+		"username": "user-4",
+		"item":"2020-01-01",
+		"city": "城市-4",
+		"sign": "宁波孩子王文化发展有限公司",
+		"experience": 807,
+		"logins": 51,
+		"wealth": 10,
+		"classify": "教育机构",
+		"score": 6
+	}, {
+		"id": 10005,
+		"username": "user-5",
+		"item":"2020-01-01",
+		"city": "城市-5",
+		"sign": "宁波孩子王文化发展有限公司",
+		"experience": 173,
+		"logins": 68,
+		"wealth": 15,
+		"classify": "教育机构",
+		"score": 87
+	}, {
+		"id": 10006,
+		"username": "user-6",
+		"item":"2020-01-01",
+		"city": "城市-6",
+		"sign": "宁波孩子王文化发展有限公司",
+		"experience": 982,
+		"logins": 37,
+		"wealth": 53,
+		"classify": "教育机构",
+		"score": 34
+	}, {
+		"id": 10007,
+		"username": "user-7",
+		"item":"2020-01-01",
+		"city": "城市-7",
+		"sign": "宁波孩子王文化发展有限公司",
+		"experience": 727,
+		"logins": 150,
+		"wealth": 15,
+		"classify": "教育机构",
+		"score": 28
+	}, {
+		"id": 10008,
+		"username": "user-8",
+		"item":"2020-01-01",
+		"city": "城市-8",
+		"sign": "宁波孩子王文化发展有限公司",
+		"experience": 951,
+		"logins": 133,
+		"wealth": 88,
+		"classify": "政府机构",
+		"score": 14
+	}, {
+		"id": 10009,
+		"username": "user-9",
+		"item":"2020-01-01",
+		"city": "城市-9",
+		"sign": "宁波孩子王文化发展有限公司",
+		"experience": 484,
+		"logins": 25,
+		"wealth": 88,
+		"classify": "教育机构",
+		"score": 75
+	},{
+		"id": 10010,
+		"username": "user-0",
+		"item":"2020-01-01",
+		"city": "城市-0",
+		"sign": "宁波孩子王文化发展有限公司",
+		"experience": 255,
+		"logins": 24,
+		"wealth": 82,
+		"classify": "教育机构",
+		"score": 57
+	},{
+		"id": 10011,
+		"username": "user-0",
+		"item":"2020-01-01",
+		"city": "城市-0",
+		"sign": "宁波孩子王文化发展有限公司",
+		"experience": 255,
+		"logins": 24,
+		"wealth": 82,
+		"classify": "教育机构",
+		"score": 57
+	} ,{
+		"id": 10012,
+		"username": "user-0",
+		"item":"2020-01-01",
+		"city": "城市-0",
+		"sign": "宁波孩子王文化发展有限公司",
+		"experience": 255,
+		"logins": 24,
+		"wealth": 82,
+		"classify": "教育机构",
+		"score": 57
+	} ,{
+		"id": 10013,
+		"username": "user-0",
+		"item":"2020-01-01",
+		"city": "城市-0",
+		"sign": "宁波孩子王文化发展有限公司",
+		"experience": 255,
+		"logins": 24,
+		"wealth": 82,
+		"classify": "教育机构",
+		"score": 57
+	} ,{
+		"id": 10014,
+		"username": "user-0",
+		"item":"2020-01-01",
+		"city": "城市-0",
+		"sign": "宁波孩子王文化发展有限公司",
+		"experience": 255,
+		"logins": 24,
+		"wealth": 82,
+		"classify": "教育机构",
+		"score": 57
+	} ]
+}
